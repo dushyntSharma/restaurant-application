@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
+import com.project.exceptions.ConnectionFailedException;
 import com.project.model.Item;
 import com.project.model.Shop;
 import com.project.service.ShopService;
@@ -15,7 +16,7 @@ public class ShopApplication {
 	static Scanner sc = new Scanner(System.in);
 	static ShopService service = new ShopServiceImpl();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ConnectionFailedException {
 		boolean flag = true;
 		int choice = 0;
 		do {
@@ -24,20 +25,24 @@ public class ShopApplication {
 			choice = sc.nextInt();
 			switch (choice) {
 			case 1:
+				// adding the shop details
 				String s = addShopDetails();
 				System.out.println(s);
 				break;
 			case 2:
+				// displaying the shop details
 				List<Shop> shop = service.displayShopDetails();
 				System.out.println(shop.toString());
 				break;
 			case 3:
+				// search the shop name based on the shopName
 				System.out.println("Enter the shop name");
 				String shopName = sc.next();
 				Shop s1 = service.searchShopByName(shopName);
 				System.out.println(s1.toString());
 				break;
 			case 4:
+				// Deleting the shop based in the shopId
 				System.out.println("Enter the shopId to Delete");
 				String shopId = sc.next();
 				String str = service.deleteShop(shopId);
@@ -45,7 +50,9 @@ public class ShopApplication {
 				break;
 
 			case 5:
+				// display the shop and items details
 				List<Shop> shop1 = service.displayShopDetails();
+				// using the comparator to sort the shop based on the shopName
 				Collections.sort(shop1, new Comparator<Shop>() {
 
 					@Override
@@ -54,13 +61,16 @@ public class ShopApplication {
 						return o1.getShopName().compareTo(o2.getShopName());
 					}
 				});
+				// using the filter stream to display the shop based on the names
 				shop1.stream().filter(t -> t.getShopId() > 1).forEach(t -> System.out.println(t));
 				break;
 
 			case 6:
+				// display the shops based on the HashMap and TreeSet
 				service.displayShops();
 				break;
 			case 7:
+				// exit
 				System.out.println("Thank you");
 				flag = false;
 				break;
@@ -73,6 +83,8 @@ public class ShopApplication {
 		} while (flag);
 	}
 
+	// adding the shop details
+	// using the arraylist to store them
 	private static String addShopDetails() {
 		// TODO Auto-generated method stub
 		List<Shop> shop = new ArrayList<Shop>();
@@ -104,6 +116,7 @@ public class ShopApplication {
 		return s;
 	}
 
+	// display menu method
 	private static void displayMenu() {
 		// TODO Auto-generated method stub
 		System.out.println();

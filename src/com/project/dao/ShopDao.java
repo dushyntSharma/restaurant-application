@@ -9,12 +9,12 @@ public interface ShopDao {
 
 	String addShopdetails(List<Shop> shop) throws ConnectionFailedException;
 
-	List<Shop> displayShopDetails();
+	List<Shop> displayShopDetails() throws ConnectionFailedException;
 
-	Shop searchShopByName(String shopName);
+	Shop searchShopByName(String shopName) throws ConnectionFailedException;
 
-	String deleteShop(String shopId);
+	String deleteShop(String shopId) throws ConnectionFailedException;
 
-	void displayShops();
+	void displayShops() throws ConnectionFailedException;
 
 }

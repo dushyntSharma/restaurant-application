@@ -4,13 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 
+import com.project.exceptions.ConnectionFailedException;
 import com.project.model.Item;
 import com.project.utility.DBConnection;
 
 public class ItemDaoImpl implements ItemDao {
 
+	// adding the item from the user to the database
+	// taking the connection from the DBConnection package
 	@Override
-	public String addItem(List<Item> item) {
+	public String addItem(List<Item> item) throws ConnectionFailedException {
 		Connection con = DBConnection.getConnection();
 		PreparedStatement st = null;
 		String query2 = "insert into item(itemId,itemName,price,shopId) values(?,?,?,?);";
@@ -28,6 +31,19 @@ public class ItemDaoImpl implements ItemDao {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}
+		// close the resources
+		finally {
+			try {
+
+				ConnectionFailedException.closeResource(st);
+				ConnectionFailedException.closeResource(con);
+
+			} catch (ConnectionFailedException e) {
+				e.printStackTrace();
+
+			}
+
 		}
 
 		return null;

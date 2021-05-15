@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -23,6 +22,8 @@ public class ShopDaoImpl implements ShopDao {
 	static ShopService service = new ShopServiceImpl();
 	static ItemDao it = new ItemDaoImpl();
 
+	// take the inputs from the users and add them to the database
+	// get the connection from the utility package
 	@Override
 	public String addShopdetails(List<Shop> shop) throws ConnectionFailedException {
 		Connection con = DBConnection.getConnection();
@@ -42,13 +43,16 @@ public class ShopDaoImpl implements ShopDao {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
+		}
+		// close the resources that are used
+
+		finally {
 			try {
 				ConnectionFailedException.closeResource(st);
 				ConnectionFailedException.closeResource(con);
 
 			} catch (ConnectionFailedException e) {
-				throw new ConnectionFailedException();
+				e.printStackTrace();
 
 			}
 
@@ -56,15 +60,19 @@ public class ShopDaoImpl implements ShopDao {
 		return str;
 	}
 
+	// displaying the data from the database
+	// get the connection from the utility
 	@Override
-	public List<Shop> displayShopDetails() {
+	public List<Shop> displayShopDetails() throws ConnectionFailedException {
 		// TODO Auto-generated method stub
 		Connection con = DBConnection.getConnection();
 		String sql = "select * from shop;";
+		Statement st = null;
+		ResultSet res = null;
 		List<Shop> shop = new ArrayList<Shop>();
 		try {
-			Statement st = con.createStatement();
-			ResultSet res = st.executeQuery(sql);
+			st = con.createStatement();
+			res = st.executeQuery(sql);
 			while (res.next()) {
 
 				List<Item> item = new ArrayList<Item>();
@@ -87,17 +95,33 @@ public class ShopDaoImpl implements ShopDao {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// close the resources
+		finally {
+			try {
+				ConnectionFailedException.closeResource(res);
+				ConnectionFailedException.closeResource(st);
+				ConnectionFailedException.closeResource(con);
+
+			} catch (ConnectionFailedException e) {
+				e.printStackTrace();
+
+			}
+
+		}
 		return shop;
 	}
 
-	public void displayShops() {
+	// display the shop using the HashMap and TreeSet
+	public void displayShops() throws ConnectionFailedException {
 		Connection con = DBConnection.getConnection();
 		String sql = "select * from shop;";
+		Statement st = null;
+		ResultSet res = null;
 		TreeSet<Shop> shop = new TreeSet<Shop>();
 		HashMap<Integer, String> map = new HashMap<>();
 		try {
-			Statement st = con.createStatement();
-			ResultSet res = st.executeQuery(sql);
+			st = con.createStatement();
+			res = st.executeQuery(sql);
 			while (res.next()) {
 				int shopId = res.getInt("shopId");
 				String shopName = res.getString("shopName");
@@ -114,24 +138,42 @@ public class ShopDaoImpl implements ShopDao {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// close the resources
+		finally {
+			try {
+				ConnectionFailedException.closeResource(res);
+				ConnectionFailedException.closeResource(st);
+				ConnectionFailedException.closeResource(con);
+
+			} catch (ConnectionFailedException e) {
+				e.printStackTrace();
+
+			}
+
+		}
 	}
 
+	// searching the shop based on the shopName from the user
 	@Override
-	public Shop searchShopByName(String shopName) {
+	public Shop searchShopByName(String shopName) throws ConnectionFailedException {
 		// TODO Auto-generated method stub
 		Connection con = DBConnection.getConnection();
 		Shop shop = null;
+		Statement st = null;
+		ResultSet res2 = null;
 		List<Item> i = new ArrayList<Item>();
 		try {
+			// using the inner joins to search the shop
 			String sql = "select * from shop s INNER JOIN item m " + "WHERE m.shopId = s.shopId AND s.shopName='"
 					+ shopName + "';";
-			Statement st = con.createStatement();
-			ResultSet res2 = st.executeQuery(sql);
+			st = con.createStatement();
+			res2 = st.executeQuery(sql);
+			// get the shop details
 			while (res2.next()) {
 				int shopId = res2.getInt("shopId");
 				String shopName1 = res2.getString("shopName");
 				String address = res2.getString("address");
-
+				// get the item details
 				while (res2.next()) {
 					Item itm = new Item(res2.getInt("itemId"), res2.getString("itemName"), res2.getDouble("price"),
 							res2.getInt("shopId"));
@@ -146,23 +188,52 @@ public class ShopDaoImpl implements ShopDao {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+		// close the resources
+		finally {
+			try {
+				ConnectionFailedException.closeResource(res2);
+				ConnectionFailedException.closeResource(st);
+				ConnectionFailedException.closeResource(con);
+
+			} catch (ConnectionFailedException e) {
+				e.printStackTrace();
+
+			}
+
+		}
+
 		return shop;
 
 	}
 
+	// deleting the shop based on the shopId
 	@Override
-	public String deleteShop(String shopId) {
+	public String deleteShop(String shopId) throws ConnectionFailedException {
 		// TODO Auto-generated method stub
 		String str = null;
+		PreparedStatement st = null;
 		Connection con = DBConnection.getConnection();
 		String sql = "delete from shop where shopId = '" + shopId + "';";
 		try {
-			PreparedStatement st = con.prepareStatement(sql);
+			st = con.prepareStatement(sql);
 			st.execute();
 			str = "The Shop with ShopID: '" + shopId + "' was successfully deleted;";
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}
+		// close the resources
+		finally {
+			try {
+
+				ConnectionFailedException.closeResource(st);
+				ConnectionFailedException.closeResource(con);
+
+			} catch (ConnectionFailedException e) {
+				e.printStackTrace();
+
+			}
+
 		}
 		return str;
 	}
