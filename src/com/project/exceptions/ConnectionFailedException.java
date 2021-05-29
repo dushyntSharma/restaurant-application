@@ -5,6 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * @author SHREEVATSA
+ *
+ */
 public class ConnectionFailedException extends Exception {
 
 	/**
@@ -12,6 +16,10 @@ public class ConnectionFailedException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @param con
+	 * @throws ConnectionFailedException
+	 */
 	public static void closeResource(Connection con) throws ConnectionFailedException {
 		if (con != null) {
 			try {
@@ -23,6 +31,10 @@ public class ConnectionFailedException extends Exception {
 		}
 	}
 
+	/**
+	 * @param st
+	 * @throws ConnectionFailedException
+	 */
 	public static void closeResource(Statement st) throws ConnectionFailedException {
 		if (st != null) {
 			try {
@@ -34,6 +46,10 @@ public class ConnectionFailedException extends Exception {
 		}
 	}
 
+	/**
+	 * @param res
+	 * @throws ConnectionFailedException
+	 */
 	public static void closeResource(ResultSet res) throws ConnectionFailedException {
 		if (res != null) {
 			try {

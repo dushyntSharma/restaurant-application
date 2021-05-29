@@ -1,5 +1,6 @@
 package com.project.model;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class Shop {
@@ -22,6 +23,13 @@ public class Shop {
 	}
 
 	public Shop(int shopId2, String shopName2, String address2) {
+		// TODO Auto-generated constructor stub
+		this.shopId = shopId2;
+		this.shopName = shopName2;
+		this.address = address2;
+	}
+
+	public Shop(int shopId2, String shopName2, String address2, HashSet<Item> item2) {
 		// TODO Auto-generated constructor stub
 		this.shopId = shopId2;
 		this.shopName = shopName2;

@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * @author SHREEVATSA
+ *
+ */
 public class DBConnection {
 	private static String JDBCURL = "jdbc:mysql://127.0.0.1:3306/restaurant";
 	private static String USERNAME = "root";

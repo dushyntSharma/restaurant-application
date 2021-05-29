@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -28,7 +30,8 @@ public class ShopDaoImpl implements ShopDao {
 	public String addShopdetails(List<Shop> shop) throws ConnectionFailedException {
 		Connection con = DBConnection.getConnection();
 		PreparedStatement st = null;
-		String str = null;
+		// write proper sql queries
+		String addShop = null;
 		String query = "insert into shop(shopId,shopName,address) values(?,?,?);";
 		Shop obj = shop.get(0);
 		try {
@@ -38,7 +41,7 @@ public class ShopDaoImpl implements ShopDao {
 			st.setString(3, obj.getAddress());
 			st.executeUpdate();
 			String s = it.addItem(obj.getItem());
-			str = "Shop ID with '" + obj.getShopId() + "' was succesfully inserted";
+			addShop = "Shop ID with '" + obj.getShopId() + "' was succesfully inserted";
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -57,7 +60,7 @@ public class ShopDaoImpl implements ShopDao {
 			}
 
 		}
-		return str;
+		return addShop;
 	}
 
 	// displaying the data from the database
@@ -126,9 +129,9 @@ public class ShopDaoImpl implements ShopDao {
 				int shopId = res.getInt("shopId");
 				String shopName = res.getString("shopName");
 				String address = res.getString("address");
-				Shop s = new Shop(shopId, shopName, address);
+				Shop disShop = new Shop(shopId, shopName, address);
 
-				map.put(s.getShopId(), s.getShopName());
+				map.put(disShop.getShopId(), disShop.getShopName());
 
 			}
 			for (Map.Entry m : map.entrySet()) {
@@ -161,7 +164,7 @@ public class ShopDaoImpl implements ShopDao {
 		Shop shop = null;
 		Statement st = null;
 		ResultSet res2 = null;
-		List<Item> i = new ArrayList<Item>();
+		List<Item> item = new LinkedList<Item>();
 		try {
 			// using the inner joins to search the shop
 			String sql = "select * from shop s INNER JOIN item m " + "WHERE m.shopId = s.shopId AND s.shopName='"
@@ -177,10 +180,10 @@ public class ShopDaoImpl implements ShopDao {
 				while (res2.next()) {
 					Item itm = new Item(res2.getInt("itemId"), res2.getString("itemName"), res2.getDouble("price"),
 							res2.getInt("shopId"));
-					i.add(itm);
+					item.add(itm);
 
 				}
-				shop = new Shop(shopId, shopName1, address, i);
+				shop = new Shop(shopId, shopName1, address, item);
 
 			}
 
@@ -236,6 +239,54 @@ public class ShopDaoImpl implements ShopDao {
 
 		}
 		return str;
+	}
+
+	@Override
+	public HashSet<Shop> displayShopByHasMap() {
+		Connection con = DBConnection.getConnection();
+		String sql = "select * from shop;";
+		Statement st = null;
+		ResultSet res = null;
+		HashSet<Shop> shop = new HashSet<Shop>();
+		try {
+			st = con.createStatement();
+			res = st.executeQuery(sql);
+			while (res.next()) {
+
+				HashSet<Item> item = new HashSet<Item>();
+				int shopId = res.getInt("shopId");
+				String shopName = res.getString("shopName");
+				String address = res.getString("address");
+				String query = "select * from item where shopId='" + shopId + "';";
+				Statement st2 = con.createStatement();
+				ResultSet res2 = st2.executeQuery(query);
+				while (res2.next()) {
+					Item itm = new Item(res2.getInt("itemId"), res2.getString("itemName"), res2.getDouble("price"),
+							res2.getInt("shopId"));
+					item.add(itm);
+				}
+				Shop sh = new Shop(shopId, shopName, address, item);
+				shop.add(sh);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// close the resources
+		finally {
+			try {
+				ConnectionFailedException.closeResource(res);
+				ConnectionFailedException.closeResource(st);
+				ConnectionFailedException.closeResource(con);
+
+			} catch (ConnectionFailedException e) {
+				e.printStackTrace();
+
+			}
+
+		}
+		return shop;
 	}
 
 }

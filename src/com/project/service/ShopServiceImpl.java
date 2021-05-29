@@ -1,5 +1,6 @@
 package com.project.service;
 
+import java.util.HashSet;
 import java.util.List;
 
 import com.project.dao.ItemDao;
@@ -13,10 +14,12 @@ public class ShopServiceImpl implements ShopService {
 	static ShopDao dao = new ShopDaoImpl();
 	static ItemDao cdao = new ItemDaoImpl();
 
+	// adding the shops
 	@Override
 	public String addShopDetails(List<Shop> shop) {
 		String s = null;
 		try {
+			// send to the dao layer
 			s = dao.addShopdetails(shop);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -25,6 +28,7 @@ public class ShopServiceImpl implements ShopService {
 		return s;
 	}
 
+	// display shops
 	@Override
 	public List<Shop> displayShopDetails() throws ConnectionFailedException {
 		// TODO Auto-generated method stub
@@ -32,6 +36,7 @@ public class ShopServiceImpl implements ShopService {
 		return shop;
 	}
 
+	// search the shop by name
 	@Override
 	public Shop searchShopByName(String shopName) throws ConnectionFailedException {
 		// TODO Auto-generated method stub
@@ -39,6 +44,7 @@ public class ShopServiceImpl implements ShopService {
 		return shop;
 	}
 
+	// delete the shop
 	@Override
 	public String deleteShop(String shopId) throws ConnectionFailedException {
 		// TODO Auto-generated method stub
@@ -50,6 +56,13 @@ public class ShopServiceImpl implements ShopService {
 	public void displayShops() throws ConnectionFailedException {
 		dao.displayShops();
 
+	}
+
+	@Override
+	public HashSet<Shop> displayShopByHasMap() {
+		// TODO Auto-generated method stub
+		HashSet<Shop> shop = dao.displayShopByHasMap();
+		return shop;
 	}
 
 }
